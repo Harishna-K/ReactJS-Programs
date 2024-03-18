@@ -1,0 +1,66 @@
+body{
+    background: url('C:\Users\Sightspectrum\Pictures\flowers.jpg');
+    background-repeat: no-repeat;
+    background-size:cover;
+}
+header {
+    background-color:black; 
+    color: #fff; 
+    padding: 10px 20px;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+  }
+  
+  .logo {
+    font-style: italic;
+    color: #1bc4ea; 
+    font-size:3rem; 
+  }
+  
+  .logo span {
+    color:white; 
+  }
+  
+  .navbar {
+    
+    display: flex; 
+  }
+ 
+  .navbar a {
+    text-decoration: none; 
+    color: #fff; 
+    margin: 0 15px;
+  }
+  
+  #toggler {
+    display: none; 
+  }
+  
+  label[for="toggler"] {
+    cursor: pointer; 
+    font-size: 1.5rem;
+    margin-right: 20px;
+  }
+  
+  
+  @media screen and (max-width: 768px) {
+    .navbar {
+      display: none; 
+      flex-direction: column; 
+      position: absolute; 
+      top: 60px; 
+      left: 0;
+      right: 0;
+      background-color: #333; 
+    }
+  
+    #toggler:checked + .navbar {
+      display: flex; 
+    }
+  
+    .navbar a {
+      margin: 10px 0; 
+    }
+  }
+  

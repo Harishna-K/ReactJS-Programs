@@ -1,0 +1,52 @@
+var express=require("express")
+var bodyParser=require("body-parser")
+var mongoose=require("mongoose")
+
+
+const app=express()
+
+app.use(bodyParser.json())
+app.use(express.static('public'))
+app.use(bodyParser.urlencoded({
+    extended:true
+}))
+
+mongoose.connect('mongodb://localhost:27017/FormDetails')
+var db=mongoose.connection
+db.on("error",()=>console.log("Error in connecting to FormDetails"));
+db.once("open",()=>console.log("connected to FormDetails"));
+
+app.post("/sign_up",(req,res)=>{
+    var name=req.body.name
+    var age=req.body.age
+    var email=req.body.email
+    var phno=req.body.phno
+    var gender=req.body.gender
+    var password=req.body.password
+
+    var data={
+    "name":name,
+    "age":age,
+    "email":email,
+    "phno":phno,
+    "gender":gender,
+    "password":password
+    }
+    db.collection('users').insertOne(data,(error,collection)=>{
+        if(error){
+            throw error;
+        }
+        console.log("Record Inserted successfully")
+    })
+    return res.redirect('signup_successful.html')
+})
+
+app.get('/',(req,res)=>{
+    res.set({
+        "Allow-access-Allow-Origin:":'*'
+    })
+    return res.redirect('index.html')
+
+}).listen(8090);
+
+console.log("Listening on port 8090");

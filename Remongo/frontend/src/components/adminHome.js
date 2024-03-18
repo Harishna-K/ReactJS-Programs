@@ -1,0 +1,148 @@
+import React, { useEffect, useState, useCallback } from "react";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ReactPaginate from 'react-paginate';
+import { useRef } from "react";
+export default function AdminHome({ userData }) {
+
+  const [data, setData] = useState([]);
+  const [limit, setLimit] = useState(5);
+  const [pageCount, setPageCount] = useState(1);
+  const currentPage = useRef();
+
+  const getAllUser = () => {
+    fetch("http://localhost:5000/getAllUser", {
+      method: "GET",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setPageCount(Math.ceil(data.pageCount));
+        setData(data.result);
+      });
+  };
+
+
+  const logOut = () => {
+    window.localStorage.clear();
+    window.location.href = "./sign-in";
+  };
+
+
+  //deleting user
+  const deleteUser = (id, name) => {
+    if (window.confirm(`Are you sure you want to delete ${name}`)) {
+      fetch("http://localhost:5000/deleteUser", {
+        method: "POST",
+        crossDomain: true,
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        body: JSON.stringify({
+          userid: id,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          alert(data.data);
+          getAllUser();
+        });
+    } else {
+    }
+  };
+
+  //pagination
+  function handlePageClick(e) {
+    console.log(e);
+    currentPage.current = e.selected + 1;
+    getPaginatedUsers();
+
+
+  }
+  function changeLimit() {
+    currentPage.current = 1;
+    getPaginatedUsers();
+  }
+
+  const getPaginatedUsers = useCallback(() => {
+    fetch(`http://localhost:5000/paginatedUsers?page=${currentPage.current}&limit=${limit}`, {
+      method: "GET",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data, "userData");
+        setPageCount(data.pageCount);
+        setData(data.result)
+      });
+  }, [currentPage, limit]);
+
+  useEffect(() => {
+    currentPage.current = 1;
+    getPaginatedUsers();
+  }, [getPaginatedUsers]);
+
+
+
+  return (
+    <div className="auth-wrapper" style={{ height: "auto" }}>
+      <div className="auth-inner" style={{ width: "auto" }}>
+        <h3>Welcom Admin</h3>
+        <table style={{ width: 500 }}>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>User Type</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((i) => {
+              return (
+                <tr key={i._id}>
+                  <td>{i.fname}</td>
+                  <td>{i.email}</td>
+                  <td>{i.userType}</td>
+                  <td>
+                    <FontAwesomeIcon
+                      icon={faTrash}
+                      onClick={() => deleteUser(i._id, i.fname)}
+                      style={{ cursor: 'pointer' }} 
+                    />
+
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+
+        <ReactPaginate
+          breakLabel="..."
+          nextLabel="next >"
+          onPageChange={handlePageClick}
+          pageRangeDisplayed={5}
+          pageCount={pageCount}
+          previousLabel="< previous"
+          renderOnZeroPageCount={null}
+          marginPagesDisplayed={2}
+          containerClassName="pagination justify-content-center"
+          pageClassName="page-item"
+          pageLinkClassName="page-link"
+          previousClassName="page-item"
+          previousLinkClassName="page-link"
+          nextClassName="page-item"
+          nextLinkClassName="page-link"
+          activeClassName="active"
+          forcePage={currentPage.current - 1}
+        />
+        <input placeholder="Limit" onChange={e => setLimit(e.target.value)} />
+        <button onClick={changeLimit}>Set Limit</button>
+        <button onClick={logOut} className="btn btn-primary">
+          Log Out
+        </button>
+      </div>
+    </div>
+  );
+}

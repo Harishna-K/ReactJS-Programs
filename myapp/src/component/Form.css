@@ -1,0 +1,41 @@
+/* Form.css */
+
+.register {
+  display: flex;
+  justify-content: space-between;
+  max-width: 800px;
+  margin: auto;
+}
+
+.col-1 {
+  flex: 1;
+  padding: 20px;
+}
+
+.col-2 {
+  flex: 1;
+}
+
+.flex {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-container {
+  margin-bottom: 15px;
+}
+
+input {
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.btn {
+  background-color: #3498db;
+  color: white;
+  padding: 10px;
+  cursor: pointer;
+  border: none;
+}
+
+/* Add any additional styling based on your design preferences */
